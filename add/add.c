@@ -6,10 +6,17 @@
 #include <math.h>
 int main(int argc, char *argv[])
 {
+	if(argc > 1 && strcmp(argv[1], "-h") == 0)
+	{
+		printf("Usage:\n\tadd [-h] [-n N]\n");
+		printf("\t-h\tDisplays this message.\n\t-n N\tUses arrays of size N.\n");
+		return 0;
+	}
 	unsigned long int  i = 0;
 	unsigned long int  n = 16;
 	if(argc == 3)
 	{
+		
 		if(strcmp(argv[1], "-n") == 0 )
 		{
 			n = strtoul (argv[2], 0, 10);
