@@ -4,6 +4,14 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+
+int64_t ellapsed_time(struct timespec start, struct timespec end)
+{
+	int64_t delta_sec = end.tv_sec - start.tv_sec;
+	int64_t delta = delta_sec * 1000000000 + end.tv_nsec - start.tv_nsec ;
+	return delta;
+}
+
 int main(int argc, char *argv[])
 {
 	if(argc > 1 && strcmp(argv[1], "-h") == 0)
@@ -43,19 +51,33 @@ int main(int argc, char *argv[])
 	__m128i *bv = (__m128i *)array2;
 	__m128i *cv = (__m128i *)array3;
 	
-	
+	struct timespec start_time;
+	struct timespec end_time;
+
+#if  _POSIX_C_SOURCE >= 199309L
+	clock_gettime(CLOCK_REALTIME, &start_time);
+#endif
+
 	for( i = 0 ; i < n/4 ; ++i )
 	{
 		cv[i] = _mm_add_epi32(av[i], bv[i]);
-			
+
 	}
-	
-	
-		
+#if  _POSIX_C_SOURCE >= 199309L
+	clock_gettime(CLOCK_REALTIME, &end_time);
+#endif
+	int64_t delta_time = ellapsed_time( start_time, end_time);
 	printf("\n\n i\t A\t B\tC=A+B\n");
 	printf("-----------------\n");
 	for( i = 0 ; i < n ; ++i )
 	{
 		printf("%2d\t%2d\t%2d\t%3d\n", i, array1[i], array2[i], array3[i]);
-	}	return 0;
+	}
+
+	printf("Ellapsed Time: %jd ns\n", delta_time);
+	printf("Time/int: %jd ns\n", delta_time / n);
+
+	return 0;
+
+
 }
